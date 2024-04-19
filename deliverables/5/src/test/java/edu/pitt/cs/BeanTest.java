@@ -27,23 +27,31 @@ public class BeanTest {
 		beans = new Bean[beanCount];
 
 		// TODO: Create a mock Random object and assign to rand
+		rand = Mockito.mock(Random.class);
 		
 		
 		// TODO: Call Bean.createInstance to create a bean in luck mode for slotCount and assign to beans[0].
 		// To make the bean always go left, pass in a rand which always returns 0 on rand.nextInt(2).
-		
+		Mockito.when(rand.nextInt(2)).thenReturn(0);
+		beans[0] = Bean.createInstance(InstanceType.IMPL, slotCount, true, rand);
 		
 		// TODO: Call Bean.createInstance to create a bean in skilled mode for slotCount and assign to beans[1].
 		// To fix bean skill level to 0, pass in a rand which always returns -3.0 on rand.nextGaussian().
 		
+		Mockito.when(rand.nextGaussian()).thenReturn(-3.0);
+		beans[1] = Bean.createInstance(InstanceType.IMPL, slotCount, false, rand);
 
 		// TODO: Call Bean.createInstance to create a bean in skilled mode for slotCount and assign to beans[2].
 		// To fix bean skill level to 2, pass in a rand which always returns -1.5 on rand.nextGaussian().
 		
+		Mockito.when(rand.nextGaussian()).thenReturn(-1.5);
+		beans[2] = Bean.createInstance(InstanceType.IMPL, slotCount, false, rand);
 
 		// TODO: Call Bean.createInstance to create a bean in skilled mode for slotCount and assign to beans[3].
 		// To fix bean skill level to 9, pass in a rand which always returns 3.0 on rand.nextGaussian().
-		
+		Mockito.when(rand.nextGaussian()).thenReturn(3.0);
+		beans[3] = Bean.createInstance(InstanceType.IMPL, slotCount, false, rand);
+
 	}
 
 	/**
@@ -58,6 +66,10 @@ public class BeanTest {
 	@Test
 	public void testConstructor() {
 		// TODO: Implement
+		for( int i = 0; i < beans.length; i++ ){
+			assertEquals(0, beans[i].getXPos());
+			assertEquals(0, beans[i].getYPos());
+		}
 	}
 
 	/**
@@ -73,6 +85,12 @@ public class BeanTest {
 	@Test
 	public void testReset() throws BeanOutOfBoundsException {
 		// TODO: Implement
+		for( int i = 0; i < beans.length; i++ ){
+			beans[i].advanceStep();
+			beans[i].reset();
+			assertEquals(0, beans[i].getXPos());
+			assertEquals(0, beans[i].getYPos());
+		}
 	}
 
 	/**
@@ -88,6 +106,9 @@ public class BeanTest {
 	@Test
 	public void testAdvanceStepLuckyBeanOnceLeft() throws BeanOutOfBoundsException {
 		// TODO: Implement;
+		beans[0].advanceStep();
+		assertEquals(0, beans[0].getXPos());
+		assertEquals(1, beans[0].getYPos());
 	}
 
 	/**
@@ -103,6 +124,10 @@ public class BeanTest {
 	@Test
 	public void testAdvanceStepLuckyBeanTwiceLeft() throws BeanOutOfBoundsException {
 		// TODO: Implement
+		beans[0].advanceStep();
+		beans[0].advanceStep();
+		assertEquals(0, beans[0].getXPos());
+		assertEquals(2, beans[0].getYPos());
 	}
 
 	/**
@@ -118,6 +143,12 @@ public class BeanTest {
 	@Test
 	public void testAdvanceStepLuckyBeanOnceRight() throws BeanOutOfBoundsException {
 		// TODO: Implement
+		rand = Mockito.mock(Random.class);
+		Mockito.when(rand.nextInt(2)).thenReturn(1);
+		beans[0] = Bean.createInstance(InstanceType.IMPL, slotCount, true, rand);
+		beans[0].advanceStep();
+		assertEquals(1, beans[0].getXPos());
+		assertEquals(1, beans[0].getYPos());
 	}
 
 	/**
@@ -133,6 +164,13 @@ public class BeanTest {
 	@Test
 	public void testAdvanceStepLuckyBeanTwiceRight() throws BeanOutOfBoundsException {
 		// TODO: Implement
+		rand = Mockito.mock(Random.class);
+		Mockito.when(rand.nextInt(2)).thenReturn(1);
+		beans[0] = Bean.createInstance(InstanceType.IMPL, slotCount, true, rand);
+		beans[0].advanceStep();
+		beans[0].advanceStep();
+		assertEquals(2, beans[0].getXPos());
+		assertEquals(2, beans[0].getYPos());
 	}
 
 	/**
@@ -148,6 +186,15 @@ public class BeanTest {
 	@Test
 	public void testAdvanceStepLuckyBean10TimesLeft() throws BeanOutOfBoundsException {
 		// TODO: Implement
+		setUp();
+		for( int i = 0; i < 9; i++ ){
+			beans[0].advanceStep();
+		}
+		try{
+			beans[0].advanceStep();
+		}catch (BeanOutOfBoundsException e) {
+			// TODO: handle exception
+		}
 	}
 
 	/**
@@ -162,6 +209,11 @@ public class BeanTest {
 	@Test
 	public void testAdvanceStepSkill0Bean9Times() throws BeanOutOfBoundsException {
 		// TODO: Implement
+		for( int i = 0; i < 9; i++ ){
+			beans[1].advanceStep();
+		}
+		assertEquals(0, beans[1].getXPos());
+		assertEquals(9, beans[1].getYPos());
 	}
 
 	/**
@@ -176,6 +228,11 @@ public class BeanTest {
 	@Test
 	public void testAdvanceStepSkill2Bean9Times() throws BeanOutOfBoundsException {
 		// TODO: Implement
+		for( int i = 0; i < 9; i++ ){
+			beans[2].advanceStep();
+		}
+		assertEquals(2, beans[2].getXPos());
+		assertEquals(9, beans[2].getYPos());
 	}
 
 	/**
@@ -190,6 +247,11 @@ public class BeanTest {
 	@Test
 	public void testAdvanceStepSkill9Bean9Times() throws BeanOutOfBoundsException {
 		// TODO: Implement
+		for( int i = 0; i < 9; i++ ){
+			beans[3].advanceStep();
+		}
+		assertEquals(9, beans[3].getXPos());
+		assertEquals(9, beans[3].getYPos());
 	}
 
 	/**
@@ -204,6 +266,9 @@ public class BeanTest {
 	@Test
 	public void testAdvanceStepSkill2BeanOnce() throws BeanOutOfBoundsException {
 		// TODO: Implement
+		beans[2].advanceStep();
+		assertEquals(1, beans[2].getXPos());
+		assertEquals(1, beans[2].getYPos());
 	}
 
 	/**
@@ -218,6 +283,10 @@ public class BeanTest {
 	@Test
 	public void testAdvanceStepSkill2BeanTwice() throws BeanOutOfBoundsException {
 		// TODO: Implement
+		beans[2].advanceStep();
+		beans[2].advanceStep();
+		assertEquals(2, beans[2].getXPos());
+		assertEquals(2, beans[2].getYPos());
 	}
 
 	/**
@@ -232,6 +301,11 @@ public class BeanTest {
 	@Test
 	public void testAdvanceStepSkill2BeanThrice() throws BeanOutOfBoundsException {
 		// TODO: Implement
+		beans[2].advanceStep();
+		beans[2].advanceStep();
+		beans[2].advanceStep();
+		assertEquals(2, beans[2].getXPos());
+		assertEquals(3, beans[2].getYPos());
 	}
 	
 }
